@@ -3,6 +3,8 @@
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 
+var Url = require('../models/urlshrt');
+
 module.exports = function (app, passport) {
 
 	function isLoggedIn (req, res, next) {
@@ -100,4 +102,61 @@ module.exports = function (app, passport) {
 			res.end(JSON.stringify(headersObj));
 
 	});
+	
+	// Url Shortener Microservice
+	app.route('/shrt')
+		.get( (req, res) => {
+			res.sendFile(path + '/public/url.html');
+	});
+	
+	app.route('/shrt/:url')
+		.get( (req, res) => {
+			
+			var fullUrl = 'https://' + req.get('host') + req.originalUrl;
+			Url.findOne( { 'shortened': fullUrl }, (err, data) => {
+				if(err) throw err;
+				
+				if(data){
+					res.writeHead(301, { Location: data.original });
+					res.end();
+				}
+					
+					
+			})
+			
+	});
+	
+	app.route('/shrt/new/:url*')
+		.get( (req, res) => {
+			var url = req.params.url + req.params[0],
+				reg = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+				urlObj = {},
+				randomStr = Math.random().toString(36).substring(2, 5);
+			
+			
+			if(!reg.test(url)){
+				urlObj.error = 'Invalid URL';
+			}else{
+				urlObj.original = url;
+				urlObj.shortened = "https://fcc-api-projects-g-kanoufi.c9users.io/shrt/" + randomStr;
+				
+				
+				Url.findOne({ 'original' : url }, (err, content) => {
+					if(err)	 throw err;
+					
+					if(content){
+						urlObj.shortened = content.shortened;
+					}else{
+						var newObj = new Url();
+						newObj.original = urlObj.original;
+						newObj.shortened = urlObj.shortened;
+						newObj.save( (err, data) => {
+							if(err) throw err;
+							return data;
+						});
+					}
+					res.send(JSON.stringify(urlObj));
+				});
+			}
+		});
 };
