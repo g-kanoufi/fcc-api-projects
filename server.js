@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var request = require('request');
 var routes = require('./app/routes/index.js');
 var mongoose = require('mongoose');
 var passport = require('passport');

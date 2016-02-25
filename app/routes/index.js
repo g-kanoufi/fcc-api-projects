@@ -1,9 +1,11 @@
 'use strict';
 
+var request = require('request');
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 
 var Url = require('../models/urlshrt');
+var ImageSearch = require('../models/imageSearch');
 
 module.exports = function (app, passport) {
 
@@ -158,5 +160,62 @@ module.exports = function (app, passport) {
 					res.send(JSON.stringify(urlObj));
 				});
 			}
+	});
+	
+	// Image search abstraction layer API
+	app.route('/img')
+		.get((req, res) => {
+			res.sendFile(path + '/public/img.html');
+	});
+	
+	app.route('/img/latest')
+		.get( (req, res) => {
+		
+		ImageSearch.find({}, {__v: 0, _id:0}, (err, content) => {
+			if(err) throw new Error(err);
+			
+			res.send(content);
+		}).limit(10).sort({date: -1});
+				
+	});
+	app.route('/img/search/:query')
+		.get( (req, res) => {
+		
+		console.log(req.params, req.query);
+		var query = req.params.query,
+			page = req.query.page - 1 || 0,
+		    options = {
+        		uri: 'https://api.imgur.com/3/gallery/search/top/' + page + '/?q=' + query,
+        		headers: {
+            		'Authorization': 'Client-ID ' + process.env.IMGUR_CLIENT
+        		}
+		    };
+		    
+		request.get(options, (err, response, body) => {
+			if(err) throw err;
+			
+			var content = JSON.parse(body)['data'],
+			    search = new ImageSearch();
+			
+			search.terms = query;
+			search.date = Date.now();
+			
+			search.save((err, data) => {
+				if(err) throw new Error(err);
+				return data;
+			});
+			res.send(content.map( (part) => {
+				return {
+					id: part.id,
+					url: part.link,
+					snippet: part.title
+				}
+			}));
+			
 		});
+		
+		
+        
+        
+	});
 };
