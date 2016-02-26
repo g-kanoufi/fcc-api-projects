@@ -1,8 +1,10 @@
 'use strict';
 
-var request = require('request');
-var path = process.cwd();
-var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+var request = require('request'),
+	multer =require('multer'),
+	upload = multer({ dest: 'uploads/' }),
+	path = process.cwd(),
+	ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
 
 var Url = require('../models/urlshrt');
 var ImageSearch = require('../models/imageSearch');
@@ -213,9 +215,18 @@ module.exports = function (app, passport) {
 			}));
 			
 		});
-		
-		
-        
-        
 	});
+	
+	// File metadata API
+	
+	app.route('/file')
+		.get( (req, res) => {
+		
+		res.render( path + '/public/file.jade')		
+	})
+		.post( upload.single('file_upload'), (req, res) => {
+			console.log(req.file);
+			res.render(path + '/public/file.jade', {file : JSON.stringify(req.file.originalname) + 'size is: ' + JSON.stringify(req.file.size) + ' bytes'});
+			
+		});
 };
