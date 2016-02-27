@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+
+<html>
+
+	<head>
+		<title>Free Code Camp - Basejump API - Timestamp Microservice</title>
+		
+		<link href="/public/css/timestamp.css" rel="stylesheet" type="text/css">
+	</head>
+
+	<header>
+		<h1>Free Code Camp - API Projects</h1>
+		<h2>Timestamp microservice</h2>
+	</header>
+
+	<body>
+		<div class="container">
+			<p class="clementine-text">This microservice, once passed a string as a parameter, will check to see whether that string contains either a unix timestamp or a natural language date (example: January 1, 2016)</p>
+			<p>If it does, it returns both the Unix timestamp and the natural language form of that date else it returns null for those properties.</p>
+			<p>Example usage:
+				<ul>
+					<li><a href="https://fcc-api-projects-g-kanoufi.c9users.io/timestamp/December%2015,%202015">https://fcc-api-projects-g-kanoufi.c9users.io/timestamp/December%2015,%202015</a></li>
+					<li><a href="https://fcc-api-projects-g-kanoufi.c9users.io/timestamp/1450137600">https://fcc-api-projects-g-kanoufi.c9users.io/timestamp/1450137600</a></li>
+				</ul>
+			</p>
+			<p>Example output:
+				<pre><code>{ 
+	unix: 1450137600, 
+	natural: "December 15, 2015" 
+}</code></pre></p>
+		</div>
+		
+	</body>
+
+</html>
+

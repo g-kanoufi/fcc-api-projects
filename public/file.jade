@@ -1,0 +1,24 @@
+doctype html
+
+head
+	title Free Code Camp - Basejump API - File Metadata
+	link(rel="stylesheet", href="/public/css/timestamp.css")
+
+	body
+		header
+			h1 Free Code Camp - API Projects
+			h2 File Metadata
+
+		div(class="container")
+			p(class="clementine-text")
+				This microservice, return the uploaded file size
+			
+			form(id="fileform", enctype="multipart/form-data" method="post")
+				input(type="hidden", value='test')
+				input(type="file", name="file_upload")
+				input(type="submit", value="Upload")
+			
+			pre
+				code=file
+		
+
