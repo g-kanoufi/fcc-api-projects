@@ -11,7 +11,7 @@ var app = express();
 require('dotenv').load();
 require('./app/config/passport')(passport);
 
-mongoose.connect(process.env.MONGO_URI);
+mongoose.connect('mongodb://fcc-mongo:TQs3t8vd^p[z@ds047652.mlab.com:47652/fcc');
 
 app.set('view engine', 'jade');
 
